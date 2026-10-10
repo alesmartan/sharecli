@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/alesmartan/sharecli/compare/v0.3.1...v0.4.0) (2026-10-10)
+
+
+### Features
+
+* HTML pages open under the top bar with copy link and download ([3a6746b](https://github.com/alesmartan/sharecli/commit/3a6746bc5d6e4f33c0ef61901531b06b70517e2a))
+
 ## [0.3.1](https://github.com/alesmartan/sharecli/compare/v0.3.0...v0.3.1) (2026-10-10)
 
 
