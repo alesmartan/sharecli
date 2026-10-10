@@ -146,10 +146,26 @@ function flash(btn: HTMLElement, text: string) {
   setTimeout(() => (btn.innerHTML = original), 1400);
 }
 
-function currentTheme(): "light" | "dark" {
+type ThemeChoice = "system" | "light" | "dark";
+const THEME_ORDER: ThemeChoice[] = ["system", "light", "dark"];
+const THEME_LABEL: Record<ThemeChoice, string> = { system: "System", light: "Light", dark: "Dark" };
+
+function themeChoice(): ThemeChoice {
   const set = document.documentElement.dataset.theme;
-  if (set === "light" || set === "dark") return set;
+  return set === "light" || set === "dark" ? set : "system";
+}
+
+function currentTheme(): "light" | "dark" {
+  const choice = themeChoice();
+  if (choice !== "system") return choice;
   return matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+}
+
+function labelThemeButton(btn: HTMLElement) {
+  const choice = themeChoice();
+  const next = THEME_ORDER[(THEME_ORDER.indexOf(choice) + 1) % THEME_ORDER.length];
+  btn.setAttribute("aria-label", `Theme: ${THEME_LABEL[choice]}. Switch to ${THEME_LABEL[next]}`);
+  btn.title = `Theme: ${THEME_LABEL[choice]}`;
 }
 
 async function renderMermaid() {
@@ -166,12 +182,19 @@ function wireBar() {
     await navigator.clipboard.writeText(location.origin + location.pathname);
     flash(e.currentTarget as HTMLElement, "Copied");
   });
-  document.querySelector<HTMLButtonElement>("[data-theme-toggle]")?.addEventListener("click", () => {
-    const next = currentTheme() === "dark" ? "light" : "dark";
-    document.documentElement.dataset.theme = next;
+  const themeBtn = document.querySelector<HTMLButtonElement>("[data-theme-toggle]");
+  if (!themeBtn) return;
+  labelThemeButton(themeBtn);
+  // Cycles system, light, dark. "System" follows the OS setting and stores nothing.
+  themeBtn.addEventListener("click", () => {
+    const next = THEME_ORDER[(THEME_ORDER.indexOf(themeChoice()) + 1) % THEME_ORDER.length];
+    if (next === "system") delete document.documentElement.dataset.theme;
+    else document.documentElement.dataset.theme = next;
     try {
-      localStorage.setItem("sharecli-theme", next);
+      if (next === "system") localStorage.removeItem("sharecli-theme");
+      else localStorage.setItem("sharecli-theme", next);
     } catch {}
+    labelThemeButton(themeBtn);
   });
 }
 
