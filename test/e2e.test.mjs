@@ -321,6 +321,7 @@ describe("management", () => {
     const r = await share("doctor");
     assert.equal(r.code, 0);
     assert.ok(r.data.checks.find((c) => c.name === "Token").ok);
+    assert.match(r.data.checks.find((c) => c.name === "Updates").detail, /9\.9\.9 is available/);
   });
 });
 

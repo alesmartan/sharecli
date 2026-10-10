@@ -8,6 +8,7 @@ import { VERSION } from "../shared/version";
 import { Client } from "./client";
 import { type Config, type Deployment, configDir, configPath, readConfig, writeConfig } from "./config";
 import { CliError, ask, c, choose, confirm, isInteractive, printJson, run } from "./ui";
+import { fetchLatest, isNewer } from "./upgrade";
 
 export const SKILL_REPO = "alesmartan/sharecli";
 
@@ -401,6 +402,15 @@ export async function doctor(flags: SetupFlags): Promise<number> {
       checks.push({ name: "Server", ok: false, detail: (err as CliError).message, hint: (err as CliError).hint });
     }
   }
+
+  const latest = await fetchLatest(3000).catch(() => null);
+  checks.push(
+    !latest
+      ? { name: "Updates", ok: true, warn: true, detail: "Could not reach npm to check" }
+      : isNewer(latest, VERSION)
+        ? { name: "Updates", ok: true, warn: true, detail: `${latest} is available (this is ${VERSION})`, hint: "share upgrade" }
+        : { name: "Updates", ok: true, detail: `${VERSION} is the latest` },
+  );
 
   const skill = findSkill();
   checks.push(

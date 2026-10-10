@@ -1,6 +1,6 @@
 ---
 name: sharecli
-description: Share an HTML page, Markdown doc, file or folder as a link with the `share` CLI. Use when the user asks to share, publish or host something, wants a link to send, or wants to update, protect, extend or delete a link shared earlier.
+description: Share a page, doc or file as a link with the `share` CLI. Use to share, publish or host something, or to change a link shared earlier.
 ---
 
 # sharecli
@@ -40,4 +40,6 @@ With `--json`, errors print `{"error": {"code", "message", "hint"}}` and exit 1.
 - **Their own server:** `share setup`, optionally `--domain s.example.com` (a domain in their Cloudflare account) or `--workers-dev`. It opens a browser for the Cloudflare login, so the user must be at the machine. If it stops on R2 not being enabled, they enable R2 once in the Cloudflare dashboard (it asks for a card; the free tier costs nothing), then run setup again.
 - **An existing server:** `share connect <url> --token <token>`, with the token from `share config --reveal` on the machine that ran setup.
 
-`share doctor` checks the config, server, token and this skill. `share upgrade --yes` updates the CLI, this skill and the server.
+`share doctor` checks the config, server, token, this skill and whether a newer version is out.
+
+An unknown command or flag usually means an old CLI. Run `share upgrade --yes` when that happens or the user asks: it updates the CLI, this skill and the user's server.

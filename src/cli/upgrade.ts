@@ -10,7 +10,7 @@ const CHECK_EVERY_MS = 24 * 3600_000;
 const registryUrl = () =>
   `${process.env.SHARECLI_REGISTRY_URL ?? "https://registry.npmjs.org"}/${PACKAGE_NAME.replace("/", "%2f")}/latest`;
 
-async function fetchLatest(timeoutMs: number): Promise<string> {
+export async function fetchLatest(timeoutMs: number): Promise<string> {
   const res = await fetch(registryUrl(), { signal: AbortSignal.timeout(timeoutMs) });
   if (!res.ok) throw new Error(`npm registry answered HTTP ${res.status}`);
   const { version } = (await res.json()) as { version?: string };
