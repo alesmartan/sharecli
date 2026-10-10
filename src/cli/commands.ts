@@ -126,6 +126,7 @@ export async function update(target: string | undefined, path: string | undefine
   const client = Client.fromConfig();
   let share: Share;
   let warnings: string[] = [];
+  const access = flags.private || flags.passcode !== undefined ? { private: true, passcode: flags.passcode } : {};
   if (path) {
     const collected = collect(path, { title: flags.title });
     printWarnings(collected, flags.json);
@@ -133,15 +134,13 @@ export async function update(target: string | undefined, path: string | undefine
     const { version } = await client.createVersion(slug, collected.manifest);
     await upload(client, slug, version, collected, Boolean(flags.json));
     share = await client.commit(slug, version, ttlOptions(flags));
+    if (access.private) share = await client.update(slug, access);
   } else {
-    const patch = { ...ttlOptions(flags), title: flags.title };
-    if (patch.title === undefined && patch.ttl_seconds === undefined && !patch.permanent) {
-      throw new CliError("Nothing to update", "Pass a file or folder to upload, or --title, --ttl or --permanent.");
+    const patch = { ...ttlOptions(flags), title: flags.title, ...access };
+    if (patch.title === undefined && patch.ttl_seconds === undefined && !patch.permanent && !patch.private) {
+      throw new CliError("Nothing to update", "Pass a file or folder to upload, or --title, --ttl, --permanent, --private or --passcode.");
     }
     share = await client.update(slug, patch);
-  }
-  if (flags.private || flags.passcode !== undefined) {
-    share = await client.update(slug, { private: true, passcode: flags.passcode });
   }
   if (flags.json) printJson(withExtras(share, { warnings }));
   else printShareSummary(share, path ? `Updated to v${share.version}` : "Updated");

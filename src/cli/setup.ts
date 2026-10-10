@@ -209,7 +209,7 @@ export async function setup(flags: SetupFlags) {
 
   // 7. Schema
   step("Applying the database schema");
-  const schema = await wrangler(["d1", "execute", workerName, "--remote", "--file", packagePath("./worker/schema.sql"), "--config", wranglerConfig], {
+  const schema = await wrangler(["d1", "execute", workerName, "--remote", "--yes", "--file", packagePath("./worker/schema.sql"), "--config", wranglerConfig], {
     accountId,
   });
   if (schema.code !== 0) throw new CliError("Could not apply the database schema", output(schema));

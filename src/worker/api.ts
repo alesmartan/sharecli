@@ -350,10 +350,9 @@ async function updateShare(req: Request, env: Env, slug: string, origin: string)
   if (ttl) {
     set("ttl_seconds", ttl.ttl_seconds);
     set("expires_at", ttl.ttl_seconds == null ? null : now + ttl.ttl_seconds * 1000);
-  } else if (b.extend) {
-    const seconds = share.ttl_seconds ?? defaultTtlSeconds(env);
-    set("ttl_seconds", seconds);
-    set("expires_at", now + seconds * 1000);
+  } else if (b.extend && share.ttl_seconds != null) {
+    // Restarts the clock; permanent shares have no clock and stay permanent.
+    set("expires_at", now + share.ttl_seconds * 1000);
   }
 
   const statements: D1PreparedStatement[] = [];

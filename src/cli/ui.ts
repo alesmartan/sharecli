@@ -86,7 +86,7 @@ export function relative(iso: string, now = Date.now()): string {
   const [n, unit] =
     abs >= 86400_000 * 2
       ? [Math.round(abs / 86400_000), "day"]
-      : abs >= 3600_000 * 2
+      : abs >= 3600_000 * 1.5
         ? [Math.round(abs / 3600_000), "hour"]
         : [Math.max(1, Math.round(abs / 60_000)), "minute"];
   const text = `${n} ${unit}${n === 1 ? "" : "s"}`;

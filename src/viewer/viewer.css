@@ -115,6 +115,7 @@ button, a, summary, [role="button"] { cursor: pointer; }
   font-family: var(--sans);
 }
 .bar-host {
+  min-width: 0;
   color: var(--muted);
   font-size: 0.875rem;
   font-weight: 500;
@@ -264,24 +265,26 @@ button, a, summary, [role="button"] { cursor: pointer; }
   border: 1px solid var(--rule);
   border-radius: 10px;
 }
+.doc .code-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.4rem 0.4rem 0 1.15rem;
+}
 .doc .code pre {
   margin: 0;
-  padding: 1rem 1.15rem;
+  padding: 0.35rem 1.15rem 1rem;
   overflow-x: auto;
   font: 0.84rem/1.6 var(--mono);
   tab-size: 2;
 }
 .doc .code-lang {
-  position: absolute;
-  top: 0.55rem;
-  right: 4.4rem;
   color: var(--muted);
   font: 0.72rem/1.6 var(--sans);
 }
 .doc .code-copy {
-  position: absolute;
-  top: 0.4rem;
-  right: 0.4rem;
+  margin-left: auto;
   height: 1.75rem;
   padding: 0 0.6rem;
   border: 1px solid var(--rule);

@@ -57,7 +57,7 @@ function render(markdown: string): string {
             ? hljs.highlight(text, { language, ignoreIllegals: true }).value
             : escapeHtml(text);
         const label = language ? `<span class="code-lang">${escapeHtml(language)}</span>` : "";
-        return `<div class="code">${label}<button class="code-copy" type="button">Copy</button><pre><code class="hljs">${highlighted}</code></pre></div>\n`;
+        return `<div class="code"><div class="code-head">${label}<button class="code-copy" type="button">Copy</button></div><pre><code class="hljs">${highlighted}</code></pre></div>\n`;
       },
       table(token) {
         // Wrap tables so wide ones scroll instead of breaking the layout.
@@ -134,7 +134,7 @@ function enhance() {
   doc.addEventListener("click", async (e) => {
     const btn = (e.target as Element).closest<HTMLButtonElement>(".code-copy");
     if (!btn) return;
-    await navigator.clipboard.writeText(btn.parentElement!.querySelector("pre")!.innerText);
+    await navigator.clipboard.writeText(btn.closest(".code")!.querySelector("pre")!.innerText);
     flash(btn, "Copied");
   });
 }

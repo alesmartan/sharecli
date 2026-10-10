@@ -19,7 +19,7 @@ ${c.bold("Share")}
 
 ${c.bold("Manage")}
   share update <share> [path]      Upload a new version to the same link
-                                   (no path: change --title, --ttl or --permanent)
+                                   (no path: change --title, --ttl, --permanent or --private)
   share ls                         List your shares
   share info <share>               Details, passcode, views and versions
   share rm <share>...              Delete shares and every version (--yes to skip the prompt)
