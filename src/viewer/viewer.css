@@ -66,11 +66,11 @@
   color-scheme: light;
 }
 :root[data-theme="dark"] {
-  --paper: #131519;
-  --ink: #e6e8ec;
-  --muted: #959ca8;
-  --rule: #2a2e36;
-  --wash: #1b1e23;
+  --paper: #161616;
+  --ink: #ececec;
+  --muted: #9e9e9e;
+  --rule: #2e2e2e;
+  --wash: #1f1f1f;
   --link: #94a9ff;
   --syn-keyword: #c4a7ff;
   --syn-string: #7fd1a6;
@@ -82,11 +82,11 @@
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --paper: #131519;
-    --ink: #e6e8ec;
-    --muted: #959ca8;
-    --rule: #2a2e36;
-    --wash: #1b1e23;
+    --paper: #161616;
+    --ink: #ececec;
+    --muted: #9e9e9e;
+    --rule: #2e2e2e;
+    --wash: #1f1f1f;
     --link: #94a9ff;
     --syn-keyword: #c4a7ff;
     --syn-string: #7fd1a6;

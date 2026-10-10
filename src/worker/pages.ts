@@ -22,7 +22,7 @@ const BASE_HEAD = `
 const PAGE_CSS = `
 @font-face{font-family:"Geist";font-style:normal;font-weight:100 900;font-display:swap;src:url(${FONT}) format("woff2")}
 :root{--paper:#fff;--ink:#17191e;--muted:#5f6673;--rule:#e4e7ec;--wash:#f4f6f9;--link:#2747c7;--danger:#b42318;color-scheme:light dark}
-@media (prefers-color-scheme:dark){:root{--paper:#131519;--ink:#e6e8ec;--muted:#959ca8;--rule:#2a2e36;--wash:#1b1e23;--link:#94a9ff;--danger:#ff8a80}}
+@media (prefers-color-scheme:dark){:root{--paper:#161616;--ink:#ececec;--muted:#9e9e9e;--rule:#2e2e2e;--wash:#1f1f1f;--link:#94a9ff;--danger:#ff8a80}}
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--paper);color:var(--ink)}
 body{font:16px/1.6 "Geist",system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh;display:flex;flex-direction:column}
