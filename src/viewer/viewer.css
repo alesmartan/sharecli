@@ -298,7 +298,9 @@ button, a, summary, [role="button"] { cursor: pointer; }
 .doc .code-copy:hover { color: var(--ink); }
 @media (hover: none) { .doc .code-copy { opacity: 1; } }
 
-.doc pre.mermaid { display: flex; justify-content: center; margin: 0 0 1.5rem; background: none; }
+/* Until Mermaid loads (or if it can't), the diagram source shows as plain code. */
+.doc pre.mermaid { margin: 0 0 1.5rem; font: 0.84rem/1.6 var(--mono); color: var(--muted); white-space: pre-wrap; }
+.doc pre.mermaid[data-processed] { display: flex; justify-content: center; color: inherit; }
 
 .doc .table-wrap { overflow-x: auto; }
 .doc table { border-collapse: collapse; width: 100%; font: 0.9rem/1.5 var(--sans); font-variant-numeric: tabular-nums; }
