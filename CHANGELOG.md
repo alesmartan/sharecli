@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/alesmartan/sharecli/compare/v0.3.0...v0.3.1) (2026-10-10)
+
+
+### Bug Fixes
+
+* upgrade skips npm's cached package list and explains slow releases ([304bc25](https://github.com/alesmartan/sharecli/commit/304bc252e4018048d9aa2f24deaf5b120d195234))
+
 ## [0.3.0](https://github.com/alesmartan/sharecli/compare/v0.2.0...v0.3.0) (2026-10-10)
 
 
