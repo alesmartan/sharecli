@@ -146,8 +146,8 @@ export function markdownPage(host: string, d: MarkdownViewerData, headers: Heade
 <header class="bar">
   <a class="bar-host" href="/${esc(d.slug)}">${esc(host)}</a>
   <div class="bar-actions">
-    <a class="btn" href="/${esc(d.slug)}/raw" download="${esc(d.filename)}">Download .md</a>
-    <button class="btn" type="button" data-copy-link>Copy link</button>
+    <a class="btn" href="/${esc(d.slug)}/raw" download="${esc(d.filename)}">Download<span class="wide"> .md</span></a>
+    <button class="btn" type="button" data-copy-link>Copy<span class="wide"> link</span></button>
     <button class="btn btn-icon" type="button" data-theme-toggle aria-label="Switch light or dark theme" title="Switch theme">
       <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg>
     </button>

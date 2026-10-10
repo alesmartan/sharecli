@@ -140,10 +140,10 @@ function enhance() {
 }
 
 function flash(btn: HTMLElement, text: string) {
-  const original = btn.dataset.label ?? btn.textContent!;
+  const original = btn.dataset.label ?? btn.innerHTML;
   btn.dataset.label = original;
   btn.textContent = text;
-  setTimeout(() => (btn.textContent = original), 1400);
+  setTimeout(() => (btn.innerHTML = original), 1400);
 }
 
 function currentTheme(): "light" | "dark" {

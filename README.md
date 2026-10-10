@@ -1,142 +1,95 @@
-# sharecli
+<p align="center">
+  <img src="icon.svg" width="84" alt="">
+</p>
 
-Share HTML pages, Markdown docs and files from the terminal, or let your AI agent do it, under your own domain. It runs on Cloudflare's free plan.
+<h1 align="center">sharecli</h1>
 
-```
-$ share ./report.html
-✓ Shared  https://s.example.com/k7p2xq
-  Expires     in 30 days (Nov 9, 2026)
-  Copied link to the clipboard
-```
+<p align="center">
+  Share pages, docs and files from your terminal or AI agent.<br>
+  Short links on your own domain, free on Cloudflare.
+</p>
 
-I built it because agents are good at making HTML pages and bad at getting them to anyone else. One command uploads the page, prints a short link, and cleans up after 30 days unless you say otherwise.
+<p align="center">
+  <img src="https://img.shields.io/badge/license-MIT-2747c7" alt="MIT license">
+  <img src="https://img.shields.io/badge/runs%20on-Cloudflare%20Workers-f38020" alt="Runs on Cloudflare Workers">
+  <img src="https://img.shields.io/badge/node-%E2%89%A520-5fa04e" alt="Node 20 or newer">
+</p>
 
-## What it does
+<p align="center">
+  <img src=".github/assets/terminal.png" width="780" alt="Sharing a page and a private doc with the share command">
+</p>
 
-- **HTML.** A single `.html` file is served as-is. Inline images work. If the page points to local images, CSS or other pages, the CLI finds them and uploads them too.
-- **Folders.** A folder with an `index.html` is served as a small static site under `/<slug>/`.
-- **Markdown.** `.md` files render in a clean reader with a contents sidebar, code highlighting, tables, Mermaid diagrams, dark mode and a download button for the source.
-- **Anything else.** PDFs, images and zips are served directly, with a `/raw` download link.
-- **Private links.** `--private` puts the page behind a generated 6-character passcode. The CLI also prints a direct link with the passcode in it, so friends can open the page in one tap.
-- **Expiry.** Shares expire after 30 days by default. `--ttl 7d` sets another window and `--permanent` keeps one forever. An hourly job deletes expired files.
-- **Versions.** `share update` uploads new content to the same link. The last 5 versions are kept, and `share rollback` brings back the previous one.
-- **Views.** `share info` counts views. Link-preview bots from Slack, iMessage and WhatsApp don't count, and no IPs or cookies are stored.
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset=".github/assets/viewer-dark.png">
+  <img src=".github/assets/viewer-light.png" alt="A shared Markdown doc in the reader">
+</picture>
 
-## Install
+## Features
 
-Needs Node 20 or newer and a Cloudflare account. The free plan is enough.
+| | |
+|---|---|
+| **HTML, Markdown, any file** | Pages are served as-is. Docs open in a clean reader with dark mode. |
+| **Private links** | `--private` adds a passcode, plus a one-tap link for friends. |
+| **Auto cleanup** | Links expire after 30 days, or never with `--permanent`. |
+| **Versions** | `update` keeps the link. `rollback` undoes the last change. |
+| **Built for agents** | `--json` on every command, and a skill for Claude Code, Codex and more. |
+| **Free** | Runs on the Cloudflare free plan: Workers, R2 and D1. |
+
+## Quick start
 
 ```bash
 npm install -g sharecli
-share setup
+share setup --domain s.example.com
+share page.html
 ```
 
-`share setup` opens a browser to log you in to Cloudflare. It then creates an R2 bucket and a D1 database, deploys the Worker and saves the settings to `~/.config/sharecli/config.json`. At the end it offers to install the agent skill. Re-run it any time; it updates the existing deployment.
+`setup` logs you in to Cloudflare and deploys your own server. Skip `--domain` for a free `workers.dev` address.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset=".github/assets/phones-dark.png">
+  <img src=".github/assets/phones-light.png" alt="An HTML page, a Markdown doc and the passcode screen on a phone">
+</picture>
+
+## Commands
 
 ```bash
-share setup --domain s.example.com   # links on your own subdomain
-share setup --workers-dev            # links on a free *.workers.dev address
+share <file|folder> [--private] [--ttl 7d | --permanent] [--slug name]
+
+share ls                     share update <link> <file>
+share info <link>            share rollback <link>
+share private <link>         share extend <link>
+share public <link>          share rm <link>
+
+share setup | connect | doctor | usage
 ```
 
-A custom domain has to be a zone in the same Cloudflare account. Use a subdomain like `s.example.com` rather than a path on your main site: shared pages run their own JavaScript, and a separate subdomain keeps it away from your main site's cookies.
-
-Cloudflare asks for a payment method before it enables R2, even on the free tier. Enable R2 once in the dashboard if setup tells you to.
-
-### More machines
-
-The machine that ran setup can show its token:
-
-```bash
-share config --reveal
-```
-
-On the other machine:
-
-```bash
-share connect https://s.example.com --token <token>
-```
-
-`SHARECLI_URL` and `SHARECLI_TOKEN` override the config file, which helps in CI.
-
-## Usage
-
-```bash
-share page.html                      # public, 30 days
-share notes.md --private             # passcode generated for you
-share deck.html --passcode friends24 # your own passcode, 4+ letters or digits
-share ./site --slug launch           # s.example.com/launch/
-share demo.mp4 --permanent           # never expires
-
-share ls                             # everything you've shared
-share info launch                    # passcode, expiry, views, versions
-share update launch ./site           # new version, same link
-share rollback launch                # back to the previous version
-share private launch                 # or: share public launch
-share extend launch --ttl 90d
-share rm launch --yes
-share usage                          # storage and views against the free plan
-share doctor                         # check config, server, token and skill
-```
-
-Every command takes a slug or a full link, and every command accepts `--json`. Run `share --help` for the full list.
+Run `share --help` for every flag.
 
 ## For AI agents
-
-The repo ships a skill that teaches agents when to share, which flags to pick and how to report the link back:
 
 ```bash
 npx skills add alesmartan/sharecli
 ```
 
-The skill has no domain in it. Each machine's config holds the server, so the same skill works for everyone. Agents should always pass `--json`. Errors come back as `{"error": {"code", "message", "hint"}}` with exit code 1, and deleting needs `--yes` when nobody is at the keyboard.
+Then ask your agent to *"make an HTML page about X and share it"*.
 
-## Costs and limits
+<details>
+<summary><b>Good to know</b></summary>
+<br>
 
-Everything fits in Cloudflare's free plan for personal use:
+- **R2 needs a card on file.** Cloudflare asks once, even on the free plan. You won't be charged under the limits.
+- **More machines:** `share connect https://s.example.com --token <token>`. Get the token with `share config --reveal`.
+- **Passcodes keep casual visitors out.** They are not meant for secrets.
+- **Limits:** 95 MB per file, 1,000 files per share, 10 GB in total on the free plan.
 
-| | Free plan | What it means here |
-|---|---|---|
-| Workers | 100,000 requests a day | Every page view and every upload is a request |
-| R2 | 10 GB stored, no egress fees | About 17,000 half-megabyte HTML pages |
-| D1 | 5 GB, 100,000 row writes a day | Two row writes per counted view, so about 50,000 views a day |
+</details>
 
-Single files can be up to 95 MB, and a share can hold up to 1,000 files.
-
-## How it works
-
-```
-share (CLI) ──HTTPS + API token──> Worker on s.example.com
-                                    ├─ R2: files, stored as <slug>/v<n>/<path>
-                                    ├─ D1: shares, versions, daily views
-                                    └─ Cron, hourly: delete expired shares
-```
-
-The CLI only talks to the Worker's API, using a bearer token. After setup it has no Cloudflare credentials of its own.
-
-Passcodes are checked on the server. A correct passcode sets a signed cookie scoped to that one share, and changing the passcode invalidates old cookies. Ten wrong tries lock a visitor out of that share for 15 minutes. Passcodes are stored in plain text so `share info` can show them again. They keep casual visitors out. They are not meant to protect secrets.
-
-All shares live on one origin. A shared page's JavaScript can read other shares a visitor has already unlocked, so share only content you'd trust on your own domain.
-
-## Development
+## Develop
 
 ```bash
 pnpm install
-pnpm dev        # builds, creates the local database, runs the Worker on localhost:8787
-pnpm test       # builds, then runs the end-to-end tests against a throwaway local Worker
-pnpm typecheck
-```
-
-`pnpm dev` reads secrets from `.dev.vars`:
-
-```
-API_TOKEN=dev-token
-SECRET=dev-secret
-```
-
-Then point a local CLI at it:
-
-```bash
-SHARECLI_CONFIG_DIR=/tmp/sharecli node dist/cli.js connect http://localhost:8787 --token dev-token
+pnpm dev     # local server on localhost:8787
+pnpm test    # end-to-end tests against a throwaway server
 ```
 
 ## License

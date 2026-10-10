@@ -323,6 +323,7 @@ button, a, summary, [role="button"] { cursor: pointer; }
   body { font-size: 17px; }
   .bar { padding: 0 0.9rem; }
   .bar-actions .btn:not(.btn-icon) { padding: 0 0.6rem; }
+  .bar .wide { display: none; }
   .layout { padding-top: 2.25rem; }
   .doc .anchor { display: none; }
 }
