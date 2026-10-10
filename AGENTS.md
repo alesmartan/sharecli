@@ -29,7 +29,17 @@ Releases are automated with release-please, so write commit messages as Conventi
 
 Every push to `main` updates a Release PR with the next version and `CHANGELOG.md`. Merging it tags the release, and `.github/workflows/release.yml` tests and publishes to npm through trusted publishing (no token). Never bump `version` by hand.
 
-Merge the Release PR with `gh pr merge <n> --squash --author-email ales.martan@gmail.com`. Without it the squash commit is authored by `github-actions[bot]`, which then shows up as a contributor on GitHub.
+Merge the Release PR from the terminal, not with the merge button or `gh pr merge`. GitHub credits those merges to the PR author, `github-actions[bot]`, which then shows up as a contributor. Instead, make the release commit yours and fast-forward `main` to it:
+
+```bash
+B=release-please--branches--main--components--sharecli
+git fetch origin && git checkout -B release origin/$B
+git commit --amend --no-edit --reset-author
+git push -f origin HEAD:$B && git push origin HEAD:main
+git checkout main && git pull && git branch -D release
+```
+
+Once `main` holds the PR's commit, GitHub marks the PR as merged and the release goes out as usual. If `main` has moved past the PR's base, wait for release-please to refresh the PR and try again.
 
 Users get the new version with `share upgrade`, which also updates the agent skill and redeploys their server. The CLI tells interactive users when npm has a newer version, at most once a day.
 
