@@ -40,4 +40,4 @@ With `--json`, errors print `{"error": {"code", "message", "hint"}}` and exit 1.
 - **Their own server:** `share setup`, optionally `--domain s.example.com` (a domain in their Cloudflare account) or `--workers-dev`. It opens a browser for the Cloudflare login, so the user must be at the machine. If it stops on R2 not being enabled, they enable R2 once in the Cloudflare dashboard (it asks for a card; the free tier costs nothing), then run setup again.
 - **An existing server:** `share connect <url> --token <token>`, with the token from `share config --reveal` on the machine that ran setup.
 
-`share doctor` checks the config, server, token and this skill.
+`share doctor` checks the config, server, token and this skill. `share upgrade --yes` updates the CLI, this skill and the server.

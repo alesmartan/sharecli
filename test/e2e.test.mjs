@@ -3,6 +3,7 @@
 import assert from "node:assert/strict";
 import { execFile, spawn } from "node:child_process";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { createServer as createHttpServer } from "node:http";
 import { createServer } from "node:net";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
@@ -19,7 +20,10 @@ const exec = promisify(execFile);
 const tmp = mkdtempSync(join(tmpdir(), "sharecli-test-"));
 const state = join(tmp, "state");
 const fixtures = join(tmp, "fixtures");
-const env = { ...process.env, SHARECLI_CONFIG_DIR: join(tmp, "config"), NO_COLOR: "1" };
+// A fake npm registry that always reports 9.9.9 as the latest version.
+const registry = createHttpServer((_req, res) => res.end(JSON.stringify({ version: "9.9.9" })));
+// HOME points at the temp dir so the agent-skill lookup never finds a real install.
+const env = { ...process.env, HOME: tmp, SHARECLI_CONFIG_DIR: join(tmp, "config"), NO_COLOR: "1" };
 
 let server;
 let base;
@@ -88,11 +92,14 @@ before(async () => {
     if (Date.now() > deadline) throw new Error("wrangler dev did not start within 60s");
     await new Promise((r) => setTimeout(r, 300));
   }
+  await new Promise((r) => registry.listen(0, "127.0.0.1", r));
+  env.SHARECLI_REGISTRY_URL = `http://127.0.0.1:${registry.address().port}`;
   await ok("connect", base, "--token", TOKEN);
 });
 
 after(() => {
   server?.kill();
+  registry.close();
   rmSync(tmp, { recursive: true, force: true });
 });
 
@@ -314,5 +321,15 @@ describe("management", () => {
     const r = await share("doctor");
     assert.equal(r.code, 0);
     assert.ok(r.data.checks.find((c) => c.name === "Token").ok);
+  });
+});
+
+describe("upgrade", () => {
+  test("reports what is outdated without touching a source checkout", async () => {
+    const r = await ok("upgrade");
+    assert.equal(r.latest, "9.9.9");
+    assert.equal(r.cli.status, "source");
+    assert.equal(r.skill.status, "not_installed");
+    assert.equal(r.server.status, "not_owner", "a connected machine never redeploys the server");
   });
 });

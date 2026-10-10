@@ -3,6 +3,7 @@ import { VERSION } from "../shared/version";
 import * as cmd from "./commands";
 import { SKILL_REPO, connect, doctor, setup, showConfig } from "./setup";
 import { CliError, c, printJson } from "./ui";
+import { notifyIfOutdated, upgrade } from "./upgrade";
 
 const HELP = `${c.bold("share")}: publish HTML pages, Markdown docs and files to your own domain.
 
@@ -42,6 +43,7 @@ ${c.bold("Server")}
   share connect <url> --token <t>  Use an existing server from this machine
   share config [--reveal]          Show settings (and the API token with --reveal)
   share doctor                     Check config, server, token and agent skill
+  share upgrade                    Update sharecli, its agent skill and your server (--yes skips the prompt)
 
 ${c.bold("Everywhere")}
   --json                           Machine-readable output (for scripts and agents)
@@ -70,6 +72,7 @@ const COMMANDS = new Set([
   "connect",
   "config",
   "doctor",
+  "upgrade",
   "help",
 ]);
 
@@ -116,6 +119,7 @@ async function main(argv: string[]): Promise<number> {
   if (!COMMANDS.has(first)) {
     if (rest.length) throw new CliError(`Unexpected arguments: ${rest.join(" ")}`, "Share one file or folder at a time.");
     await cmd.publish(first, flags);
+    await notifyIfOutdated(Boolean(flags.json));
     return 0;
   }
 
@@ -167,9 +171,16 @@ async function main(argv: string[]): Promise<number> {
     case "config":
       showConfig(flags);
       break;
-    case "doctor":
-      return doctor(flags);
+    case "doctor": {
+      const code = await doctor(flags);
+      await notifyIfOutdated(Boolean(flags.json));
+      return code;
+    }
+    case "upgrade":
+      await upgrade(flags);
+      return 0;
   }
+  await notifyIfOutdated(Boolean(flags.json));
   return 0;
 }
 

@@ -308,17 +308,17 @@ async function offerSkill(flags: SetupFlags, interactive: boolean) {
   }
 }
 
-const SKILL_DIRS = [
+const GLOBAL_SKILL_DIRS = [
   join(homedir(), ".agents/skills/sharecli"),
   join(homedir(), ".claude/skills/sharecli"),
   join(homedir(), ".codex/skills/sharecli"),
   join(homedir(), ".cursor/skills/sharecli"),
   join(homedir(), ".config/opencode/skills/sharecli"),
-  join(process.cwd(), ".agents/skills/sharecli"),
-  join(process.cwd(), ".claude/skills/sharecli"),
 ];
+const PROJECT_SKILL_DIRS = [join(process.cwd(), ".agents/skills/sharecli"), join(process.cwd(), ".claude/skills/sharecli")];
 
-export const findSkill = () => SKILL_DIRS.find((d) => existsSync(join(d, "SKILL.md")));
+export const findSkill = () => [...GLOBAL_SKILL_DIRS, ...PROJECT_SKILL_DIRS].find((d) => existsSync(join(d, "SKILL.md")));
+export const isGlobalSkill = (dir: string) => GLOBAL_SKILL_DIRS.includes(dir);
 
 // ---- connect / config / doctor ----------------------------------------------
 

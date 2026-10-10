@@ -61,6 +61,7 @@ share private <link>         share extend <link>
 share public <link>          share rm <link>
 
 share setup | connect | doctor | usage
+share upgrade                # update the CLI, the agent skill and your server
 ```
 
 Run `share --help` for every flag.
