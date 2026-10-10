@@ -224,7 +224,10 @@ describe("private shares", () => {
   test("show the passcode page until unlocked", async () => {
     const res = await get(`/${s.slug}`);
     assert.equal(res.status, 401);
-    assert.match(await res.text(), /This page is protected/);
+    const html = await res.text();
+    assert.match(html, /This page is protected/);
+    assert.match(html, /name="passcode" type="password"/, "the passcode is masked while typing");
+    assert.match(html, /aria-label="Show passcode"/);
   });
 
   test("reject a wrong passcode", async () => {

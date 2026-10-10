@@ -7,6 +7,8 @@ import {
   Moon02Icon,
   Sun03Icon,
   Tick02Icon,
+  ViewIcon,
+  ViewOffSlashIcon,
 } from "@hugeicons/core-free-icons";
 
 type IconData = readonly (readonly [string, Readonly<Record<string, string | number>>])[];
@@ -35,4 +37,6 @@ export const icons = {
   light: (size = 18, className?: string) => svg(Sun03Icon as IconData, size, className),
   dark: (size = 18, className?: string) => svg(Moon02Icon as IconData, size, className),
   github: (size = 16) => svg(GithubIcon as IconData, size),
+  view: (size = 18, className?: string) => svg(ViewIcon as IconData, size, className),
+  viewOff: (size = 18, className?: string) => svg(ViewOffSlashIcon as IconData, size, className),
 };

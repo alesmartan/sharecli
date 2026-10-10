@@ -35,6 +35,12 @@ a{color:var(--link)}
 form{display:flex;gap:.5rem;margin-top:1.6rem}
 input{flex:1;min-width:0;font:500 1.15rem/1 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.18em;padding:.8rem .9rem;border:1px solid var(--rule);border-radius:10px;background:var(--wash);color:var(--ink)}
 input:focus{outline:2px solid var(--link);outline-offset:1px;border-color:transparent}
+.field{position:relative;flex:1;min-width:0;display:flex}
+.field input{padding-right:2.9rem}
+.field .reveal{position:absolute;top:50%;right:.35rem;transform:translateY(-50%);display:grid;place-items:center;width:2.25rem;height:2.25rem;padding:0;border-radius:8px;background:none;color:var(--muted)}
+.field .reveal:hover{opacity:1;color:var(--ink)}
+.reveal .hide,.reveal[aria-pressed="true"] .show{display:none}
+.reveal[aria-pressed="true"] .hide{display:block}
 button{font:600 .95rem/1 "Geist",system-ui,-apple-system,"Segoe UI",sans-serif;padding:0 1.15rem;border:0;border-radius:10px;background:var(--ink);color:var(--paper);cursor:pointer}
 button:hover{opacity:.88}
 button:focus-visible{outline:2px solid var(--link);outline-offset:2px}
@@ -83,9 +89,13 @@ export function gatePage(opts: { host: string; action: string; next: string; err
 <p>Enter the passcode you were sent with the link.</p>
 <form method="post" action="${esc(opts.action)}">
   <input type="hidden" name="next" value="${esc(opts.next)}">
-  <input name="passcode" aria-label="Passcode" autocomplete="off" autocapitalize="off" spellcheck="false" autofocus required minlength="4" maxlength="64" placeholder="passcode">
+  <div class="field">
+    <input id="passcode" name="passcode" type="password" aria-label="Passcode" autocomplete="off" autocapitalize="off" spellcheck="false" autofocus required minlength="4" maxlength="64" placeholder="passcode">
+    <button class="reveal" type="button" aria-label="Show passcode" aria-pressed="false" aria-controls="passcode" title="Show passcode">${icons.view(18, "show")}${icons.viewOff(18, "hide")}</button>
+  </div>
   <button type="submit">Open page</button>
 </form>
+<script>(function(){var b=document.querySelector(".reveal"),i=document.getElementById("passcode");b.addEventListener("click",function(){var on=i.type==="password";i.type=on?"text":"password";b.setAttribute("aria-pressed",on);var l=on?"Hide passcode":"Show passcode";b.setAttribute("aria-label",l);b.title=l;i.focus()})})()</script>
 ${opts.error ? `<p class="error" role="alert">${esc(opts.error)}</p>` : ""}`,
   });
 }
