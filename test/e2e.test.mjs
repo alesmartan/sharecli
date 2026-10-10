@@ -157,6 +157,7 @@ describe("publishing", () => {
     assert.match(page, /\/_assets\/viewer\.js/);
     assert.match(page, /class="bar-via" href="https:\/\/github\.com\/alesmartan\/sharecli"/);
     assert.match(page, /data-theme-toggle/);
+    assert.match(page, /data-copy-link aria-label="Copy link"/);
     const raw = await get(`/${s.slug}/raw`);
     assert.match(raw.headers.get("content-disposition"), /attachment; filename="notes\.md"/);
     assert.equal((await get(`/${s.slug}/shot.png`)).status, 200);

@@ -168,13 +168,14 @@ button, a, summary, [role="button"] { cursor: pointer; }
   white-space: nowrap;
 }
 .btn:hover { background: var(--wash); }
-.btn .wide { margin-left: 0.25em; }
 .btn-icon { width: 2.125rem; padding: 0; justify-content: center; }
 /* The theme button shows the current choice: system until the reader picks light or dark. */
 .theme-icon { display: none; }
 :root:not([data-theme]) .theme-system,
 :root[data-theme="light"] .theme-light,
 :root[data-theme="dark"] .theme-dark { display: block; }
+.copy-done, [data-copied] .copy-idle { display: none; }
+[data-copied] .copy-done { display: block; }
 
 /* Layout: one reading column, plus a contents rail on wide screens */
 .layout {
@@ -355,7 +356,6 @@ button, a, summary, [role="button"] { cursor: pointer; }
   body { font-size: 16px; }
   .bar { padding: 0 0.9rem; }
   .bar-left { gap: 0.45rem; }
-  .bar-actions .btn:not(.btn-icon) { padding: 0 0.6rem; }
   .bar .wide { display: none; }
   .layout { padding-top: 2.25rem; }
   .doc .anchor { display: none; }

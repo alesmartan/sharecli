@@ -179,8 +179,15 @@ async function renderMermaid() {
 
 function wireBar() {
   document.querySelector<HTMLButtonElement>("[data-copy-link]")?.addEventListener("click", async (e) => {
+    const btn = e.currentTarget as HTMLElement;
     await navigator.clipboard.writeText(location.origin + location.pathname);
-    flash(e.currentTarget as HTMLElement, "Copied");
+    // Icon-only button: swap the link icon for a tick instead of changing its text.
+    btn.dataset.copied = "";
+    btn.title = "Copied";
+    setTimeout(() => {
+      delete btn.dataset.copied;
+      btn.title = "Copy link";
+    }, 1400);
   });
   const themeBtn = document.querySelector<HTMLButtonElement>("[data-theme-toggle]");
   if (!themeBtn) return;
