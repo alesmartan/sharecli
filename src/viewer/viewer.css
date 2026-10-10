@@ -177,6 +177,12 @@ button, a, summary, [role="button"] { cursor: pointer; }
 .copy-done, [data-copied] .copy-idle { display: none; }
 [data-copied] .copy-done { display: block; }
 
+/* HTML pages: the bar on top, the shared page filling the rest of the window */
+body.framed { display: flex; flex-direction: column; height: 100vh; height: 100dvh; overflow: hidden; }
+.framed .bar { position: static; flex-shrink: 0; }
+/* White under the page, as a browser tab would show it, even when the bar is dark. */
+.frame { display: block; flex: 1; width: 100%; min-height: 0; border: 0; background: #fff; }
+
 /* Layout: one reading column, plus a contents rail on wide screens */
 .layout {
   max-width: 42rem;

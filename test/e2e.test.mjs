@@ -119,6 +119,28 @@ describe("publishing", () => {
     assert.match(await res.text(), /<h1>Hi<\/h1>/);
   });
 
+  test("a browser gets the top bar with the HTML page in a frame under it", async () => {
+    const s = await ok(fixture("framed.html", "<!doctype html><title>Framed</title><h1>Inside</h1>"));
+    const doc = { headers: { "sec-fetch-dest": "document", "user-agent": "Mozilla/5.0" } };
+    const res = await get(`/${s.slug}`, doc);
+    assert.equal(res.headers.get("vary"), "Sec-Fetch-Dest");
+    const page = await res.text();
+    assert.match(page, /class="bar-via"/);
+    assert.match(page, new RegExp(`<iframe class="frame" id="frame" src="/${s.slug}"`));
+    assert.match(page, new RegExp(`href="/${s.slug}/raw" download="framed.html"`));
+    assert.match(page, /\/_assets\/frame\.js/);
+    assert.doesNotMatch(page, /<h1>Inside<\/h1>/);
+    // The frame, link previews and agents get the page itself.
+    assert.match(await (await get(`/${s.slug}`, { headers: { "sec-fetch-dest": "iframe" } })).text(), /<h1>Inside<\/h1>/);
+    assert.match(await (await get(`/${s.slug}`, { headers: { "sec-fetch-dest": "document", "user-agent": "Slackbot 1.0" } })).text(), /<h1>Inside<\/h1>/);
+    const raw = await get(`/${s.slug}/raw`);
+    assert.match(raw.headers.get("content-disposition"), /attachment; filename="framed.html"/);
+    assert.equal((await get("/_assets/frame.js")).status, 200);
+    // Opening it in a browser and then loading the frame counts as one view.
+    await new Promise((r) => setTimeout(r, 300));
+    assert.equal((await ok("info", s.slug)).views, 1);
+  });
+
   test("a folder becomes a site with its assets under /<slug>/", async () => {
     fixture("site/index.html", '<title>Site</title><link rel="stylesheet" href="style.css"><img src="img/a.png">');
     fixture("site/style.css", "body{color:red}");
@@ -134,6 +156,13 @@ describe("publishing", () => {
     assert.equal((await get("/my-site/docs")).headers.get("location"), "/my-site/docs/");
     assert.equal(await (await get("/my-site/docs/")).text(), "docs");
     assert.equal((await get("/my-site/missing.png")).status, 404);
+    // Every HTML page of a site gets the bar in a browser, with no download since there is no single file.
+    const doc = { headers: { "sec-fetch-dest": "document" } };
+    const framed = await (await get("/my-site/docs/", doc)).text();
+    assert.match(framed, /<iframe class="frame" id="frame" src="\/my-site\/docs\/"/);
+    assert.doesNotMatch(framed, /download=/);
+    assert.equal(await (await get("/my-site/style.css", doc)).text(), "body{color:red}");
+    assert.equal((await get("/my-site/missing.html", doc)).status, 404);
   });
 
   test("an HTML file that references local images takes them along", async () => {

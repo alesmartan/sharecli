@@ -117,6 +117,63 @@ export function homePage(host: string) {
   });
 }
 
+const VIEWER_CSS = `<link rel="stylesheet" href="/_assets/viewer.css?v=${encodeURIComponent(VERSION)}">`;
+/** Applies the reader's saved theme before the page paints, then loads the viewer styles. */
+const VIEWER_HEAD = `
+<script>try{var t=localStorage.getItem("sharecli-theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}</script>
+${VIEWER_CSS}`;
+
+const copyLink = `<button class="btn btn-icon" type="button" data-copy-link aria-label="Copy link" title="Copy link">${icons.link(18, "copy-idle")}${icons.tick(18, "copy-done")}</button>`;
+const themeToggle = `<button class="btn btn-icon" type="button" data-theme-toggle aria-label="Theme" title="Theme">${icons.system(18, "theme-icon theme-system")}${icons.light(18, "theme-icon theme-light")}${icons.dark(18, "theme-icon theme-dark")}</button>`;
+const download = (slug: string, filename: string, title: string) =>
+  `<a class="btn btn-icon" href="/${esc(slug)}/raw" download="${esc(filename)}" aria-label="Download ${esc(filename)}" title="${esc(title)}">${icons.download()}</a>`;
+
+function bar(host: string, slug: string, actions: string): string {
+  return `<header class="bar">
+  <div class="bar-left">
+    <a class="bar-host" href="/${esc(slug)}">${esc(host)}</a>
+    <span class="bar-sep" aria-hidden="true">/</span>
+    <a class="bar-via" href="${REPO}" title="sharecli on GitHub">${GITHUB}<span class="wide">via sharecli</span></a>
+  </div>
+  <div class="bar-actions">${actions}</div>
+</header>`;
+}
+
+export interface FrameData {
+  slug: string;
+  title: string;
+  /** The page to show, as a path with its query. The frame loads the same URL and gets the page itself. */
+  src: string;
+  /** Set for a single HTML file, which can be downloaded. Sites have no single file to offer. */
+  filename?: string;
+}
+
+/**
+ * The top bar over a shared HTML page, which runs untouched in a frame below it. The bar starts light,
+ * like a page without a background, and frame.js turns it dark when the page turns out to be dark.
+ */
+export function framePage(host: string, d: FrameData, headers: HeadersInit): Response {
+  const v = encodeURIComponent(VERSION);
+  const html = `<!doctype html>
+<html lang="en" data-theme="light">
+<head>${BASE_HEAD}
+<title>${esc(d.title)}</title>
+<meta property="og:title" content="${esc(d.title)}">
+<meta property="og:site_name" content="${esc(host)}">
+${VIEWER_CSS}
+</head>
+<body class="framed">
+${bar(host, d.slug, `${d.filename ? download(d.slug, d.filename, "Download .html") : ""}${copyLink}`)}
+<iframe class="frame" id="frame" src="${esc(d.src)}" title="${esc(d.title)}"></iframe>
+<script>if(location.hash)document.getElementById("frame").src=location.pathname+location.search+location.hash</script>
+<script src="/_assets/frame.js?v=${v}" defer></script>
+</body>
+</html>`;
+  const h = new Headers(headers);
+  h.set("content-type", "text/html; charset=utf-8");
+  return new Response(html, { status: 200, headers: h });
+}
+
 export interface MarkdownViewerData {
   slug: string;
   title: string;
@@ -143,22 +200,10 @@ export function markdownPage(host: string, d: MarkdownViewerData, headers: Heade
 <meta property="og:title" content="${esc(d.title)}">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="${esc(host)}">
-<script>try{var t=localStorage.getItem("sharecli-theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}</script>
-<link rel="stylesheet" href="/_assets/viewer.css?v=${v}">
+${VIEWER_HEAD}
 </head>
 <body>
-<header class="bar">
-  <div class="bar-left">
-    <a class="bar-host" href="/${esc(d.slug)}">${esc(host)}</a>
-    <span class="bar-sep" aria-hidden="true">/</span>
-    <a class="bar-via" href="${REPO}" title="sharecli on GitHub">${GITHUB}<span class="wide">via sharecli</span></a>
-  </div>
-  <div class="bar-actions">
-    <a class="btn btn-icon" href="/${esc(d.slug)}/raw" download="${esc(d.filename)}" aria-label="Download ${esc(d.filename)}" title="Download .md">${icons.download()}</a>
-    <button class="btn btn-icon" type="button" data-copy-link aria-label="Copy link" title="Copy link">${icons.link(18, "copy-idle")}${icons.tick(18, "copy-done")}</button>
-    <button class="btn btn-icon" type="button" data-theme-toggle aria-label="Theme" title="Theme">${icons.system(18, "theme-icon theme-system")}${icons.light(18, "theme-icon theme-light")}${icons.dark(18, "theme-icon theme-dark")}</button>
-  </div>
-</header>
+${bar(host, d.slug, `${download(d.slug, d.filename, "Download .md")}${copyLink}${themeToggle}`)}
 <div class="layout">
   <main class="doc" id="doc"><noscript><pre class="raw">${esc(d.markdown)}</pre></noscript></main>
   <nav class="toc" id="toc" aria-label="On this page" hidden></nav>

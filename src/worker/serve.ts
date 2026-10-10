@@ -1,7 +1,7 @@
 import { ANY_SLUG_RE, RESERVED_SLUGS } from "../shared/constants";
 import { hmac, safeEqual } from "./crypto";
 import { type Env, type LiveShare, getLiveShare, isExpired, utcDay, versionPrefix } from "./db";
-import { expiredPage, gatePage, homePage, markdownPage, notFoundPage } from "./pages";
+import { expiredPage, framePage, gatePage, homePage, markdownPage, notFoundPage } from "./pages";
 
 const UNLOCK_MAX_ATTEMPTS = 10;
 const UNLOCK_WINDOW_MS = 15 * 60_000;
@@ -58,27 +58,33 @@ async function serveShare(req: Request, env: Env, ctx: ExecutionContext, share: 
   const host = url.host;
   const prefix = versionPrefix(share.slug, share.version);
   const cacheControl = share.private ? "private, no-cache" : "public, no-cache";
+  // A browser opening an HTML page gets the top bar with the page in a frame under it. The frame then
+  // loads the same URL and gets the page itself, as do agents, curl and link previews.
+  const dest = req.headers.get("sec-fetch-dest");
+  const wantsFrame = req.method === "GET" && dest === "document" && !isBot(req);
   const countView = () => {
-    if (req.method === "GET" && !isBot(req)) ctx.waitUntil(recordView(env, share.slug));
+    if (req.method === "GET" && dest !== "iframe" && !isBot(req)) ctx.waitUntil(recordView(env, share.slug));
   };
+  const frame = (filename?: string) =>
+    framePage(host, { slug: share.slug, title: share.title || share.entry, src: url.pathname + url.search, filename }, framedHeaders(cacheControl));
 
   switch (share.kind) {
     case "html": {
+      if (rest === "raw") return (await serveObject(req, env, prefix + share.entry, cacheControl, share.entry)) ?? notFoundPage(host);
       if (rest !== "") break;
       countView();
-      return (await serveObject(req, env, prefix + share.entry, cacheControl)) ?? notFoundPage(host);
+      if (wantsFrame) return frame(share.entry.split("/").pop());
+      return framed(await serveObject(req, env, prefix + share.entry, cacheControl)) ?? notFoundPage(host);
     }
     case "site": {
       if (rest === "" && !url.pathname.endsWith("/")) return redirect(`/${share.slug}/${url.search}`);
-      if (rest === "") {
-        countView();
-        return (await serveObject(req, env, prefix + share.entry, cacheControl)) ?? notFoundPage(host);
-      }
-      const key = prefix + (rest.endsWith("/") ? `${rest}index.html` : rest);
+      const key = rest === "" ? prefix + share.entry : prefix + (rest.endsWith("/") ? `${rest}index.html` : rest);
+      if (rest === "") countView();
+      if (wantsFrame && /\.html?$/i.test(key) && (await env.BUCKET.head(key))) return frame();
       const found = await serveObject(req, env, key, cacheControl);
-      if (found) return found;
+      if (found) return /\.html?$/i.test(key) ? framed(found) : found;
       // `/slug/docs` → `/slug/docs/` when docs/index.html exists, so relative links keep working.
-      if (!rest.endsWith("/") && (await env.BUCKET.head(`${prefix}${rest}/index.html`))) {
+      if (rest !== "" && !rest.endsWith("/") && (await env.BUCKET.head(`${prefix}${rest}/index.html`))) {
         return redirect(`${url.pathname}/${url.search}`);
       }
       return notFoundPage(host);
@@ -122,6 +128,18 @@ function baseHeaders(cacheControl: string): Headers {
     "x-robots-tag": "noindex, nofollow",
     "x-content-type-options": "nosniff",
   });
+}
+
+/** The frame page and the page itself share a URL, so caches must keep them apart. */
+function framedHeaders(cacheControl: string): Headers {
+  const h = baseHeaders(cacheControl);
+  h.set("vary", "Sec-Fetch-Dest");
+  return h;
+}
+
+function framed<T extends Response | null>(res: T): T {
+  res?.headers.append("vary", "Sec-Fetch-Dest");
+  return res;
 }
 
 const redirect = (location: string, status = 301) => new Response(null, { status, headers: { location } });

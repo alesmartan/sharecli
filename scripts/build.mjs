@@ -1,4 +1,4 @@
-// Builds the CLI, the Worker and the Markdown viewer into dist/.
+// Builds the CLI, the Worker, the Markdown viewer and the HTML frame into dist/.
 import { build } from "esbuild";
 import { cpSync, mkdirSync, readFileSync, rmSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -34,8 +34,8 @@ await Promise.all([
     logLevel: "warning",
   }),
   build({
-    entryPoints: [join(root, "src/viewer/viewer.ts")],
-    outfile: join(assets, "viewer.js"),
+    entryPoints: [join(root, "src/viewer/viewer.ts"), join(root, "src/viewer/frame.ts")],
+    outdir: assets,
     bundle: true,
     minify: true,
     platform: "browser",

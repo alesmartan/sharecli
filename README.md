@@ -38,7 +38,7 @@ like my domain or the Cloudflare login. Finish by sharing a test page and sendin
 
 | | |
 |---|---|
-| **HTML, Markdown, any file** | Pages are served as-is. Docs open in a clean reader with dark mode. |
+| **HTML, Markdown, any file** | Pages run untouched under a slim bar to copy the link or download. Docs open in a clean reader with dark mode. |
 | **Private links** | `--private` adds a passcode, plus a one-tap link for friends. |
 | **Auto cleanup** | Links expire after 30 days, or never with `--permanent`. |
 | **Versions** | `update` keeps the link. `rollback` undoes the last change. |
