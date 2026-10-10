@@ -1,0 +1,35 @@
+# Keeps a Release PR open with the next version and changelog. Merging it tags
+# the release, then this publishes to npm with trusted publishing (no token).
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: googleapis/release-please-action@v4
+        id: release
+      - if: ${{ steps.release.outputs.release_created }}
+        uses: actions/checkout@v4
+      - if: ${{ steps.release.outputs.release_created }}
+        uses: pnpm/action-setup@v4
+      - if: ${{ steps.release.outputs.release_created }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+          cache: pnpm
+      - if: ${{ steps.release.outputs.release_created }}
+        run: pnpm install --frozen-lockfile
+      - if: ${{ steps.release.outputs.release_created }}
+        run: pnpm test
+      - if: ${{ steps.release.outputs.release_created }}
+        run: npm publish --provenance

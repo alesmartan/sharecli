@@ -25,6 +25,10 @@ Every CLI command must keep working with `--json` and return exit code 1 with `{
 
 ## Releasing
 
-Bump `version` in `package.json`, run `pnpm test`, then `npm publish`. The owner publishes, since npm asks for a browser approval. Users update their server by re-running `share setup`.
+Releases are automated with release-please, so write commit messages as Conventional Commits: `fix:` for a patch, `feat:` for a new feature, `feat!:` for a breaking change, and `docs:`, `test:`, `ci:` or `chore:` for anything that shouldn't ship a release.
+
+Every push to `main` updates a Release PR with the next version and `CHANGELOG.md`. Merging it tags the release, and `.github/workflows/release.yml` tests and publishes to npm through trusted publishing (no token). Never bump `version` by hand.
+
+Users get the new version with `share upgrade`, which also updates the agent skill and redeploys their server. The CLI tells interactive users when npm has a newer version, at most once a day.
 
 README screenshots live in `.github/assets/`.
