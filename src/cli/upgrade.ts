@@ -68,7 +68,8 @@ function installer(): Installer {
   if (!path.includes("/node_modules/")) return { kind: "source" };
   if (path.includes("/pnpm/") || path.includes("/.pnpm/")) return { kind: "pnpm", cmd: "pnpm", args: ["add", "-g", target] };
   if (path.includes("/.bun/")) return { kind: "bun", cmd: "bun", args: ["add", "-g", target] };
-  return { kind: "npm", cmd: "npm", args: ["install", "-g", target] };
+  // --prefer-online skips npm's cached package list, which can predate a fresh release
+  return { kind: "npm", cmd: "npm", args: ["install", "-g", "--prefer-online", target] };
 }
 
 interface UpgradeFlags {
@@ -101,7 +102,11 @@ export async function upgrade(flags: UpgradeFlags) {
     say(`${c.cyan("›")} Updating sharecli ${VERSION} → ${latest}`);
     const r = await run(how.cmd, how.args, { capture: json });
     if (r.code !== 0) {
-      throw new CliError(`${how.cmd} could not install ${latest}`, `Run it yourself: ${how.cmd} ${how.args.join(" ")}`, "upgrade_failed");
+      throw new CliError(
+        `${how.cmd} could not install ${latest}`,
+        `A new release can take a few minutes to reach every npm server, so try again shortly. Or run it yourself: ${how.cmd} ${how.args.join(" ")}`,
+        "upgrade_failed",
+      );
     }
     result.cli = { status: "updated", via: how.kind };
     say(`${c.green("✓")} sharecli ${latest} installed`);
