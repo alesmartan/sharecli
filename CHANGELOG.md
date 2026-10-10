@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/alesmartan/sharecli/compare/v0.4.0...v0.5.0) (2026-10-10)
+
+
+### Features
+
+* mask the passcode field, with an eye button to show it ([#6](https://github.com/alesmartan/sharecli/issues/6)) ([70d6fb0](https://github.com/alesmartan/sharecli/commit/70d6fb08968c8f1cf711215443461c5095e30df5))
+
 ## [0.4.0](https://github.com/alesmartan/sharecli/compare/v0.3.1...v0.4.0) (2026-10-10)
 
 
