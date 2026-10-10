@@ -38,7 +38,7 @@
 ## Quick start
 
 ```bash
-npm install -g sharecli
+npm install -g @alesmartan/sharecli
 share setup --domain s.example.com
 share page.html
 ```

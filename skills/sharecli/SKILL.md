@@ -31,6 +31,8 @@ Every command accepts a slug or the full link.
 
 ## When it fails
 
+`share: command not found` means the CLI isn't installed: `npm install -g @alesmartan/sharecli`.
+
 With `--json`, errors print `{"error": {"code", "message", "hint"}}` and exit 1. Follow the `hint`.
 
 `not_configured` means this machine has no server yet. Two ways out, and the user picks:

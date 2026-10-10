@@ -1,5 +1,5 @@
 {
-  "name": "sharecli",
+  "name": "@alesmartan/sharecli",
   "version": "0.1.0",
   "description": "Share HTML pages, Markdown docs and files from the terminal (or your AI agent) under your own domain. Runs free on Cloudflare.",
   "type": "module",
@@ -19,6 +19,9 @@
     "README.md",
     "LICENSE"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "engines": {
     "node": ">=20"
   },
