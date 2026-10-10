@@ -19,6 +19,27 @@
   <img src=".github/assets/terminal.png" width="780" alt="Sharing a page and a private doc with the share command">
 </p>
 
+## Set it up with your agent
+
+Paste this into Claude Code, Codex or any coding agent:
+
+```text
+Set up sharecli for me (https://github.com/alesmartan/sharecli) so you can share pages and files as links.
+
+1. Install the CLI: npm install -g @alesmartan/sharecli
+2. Ask me whether links should live on my own domain (a subdomain like s.example.com,
+   on a domain I have in Cloudflare) or on a free workers.dev address.
+3. Run `npx wrangler whoami`. If I'm not logged in, run `npx wrangler login` and tell me
+   to approve it in the browser. If I have several Cloudflare accounts, ask which one to use.
+4. Run `share setup --domain <my subdomain> --install-skill`, or `--workers-dev` instead
+   of `--domain`, adding `--account-id <id>` if I picked an account.
+   If it says R2 isn't enabled, send me to dash.cloudflare.com > R2 to enable it
+   (it asks for a card, the free tier costs nothing), then run it again.
+   If the subdomain already has a DNS record, ask me to remove it or pick another one.
+5. Run `share doctor` and fix anything it flags.
+6. Make a small HTML page, share it with `share page.html`, and send me the link.
+```
+
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset=".github/assets/viewer-dark.png">
   <img src=".github/assets/viewer-light.png" alt="A shared Markdown doc in the reader">
