@@ -55,8 +55,14 @@ await Promise.all([
 
 cpSync(join(root, "src/worker/schema.sql"), join(dist, "worker", "schema.sql"));
 cpSync(join(root, "src/viewer/favicon.svg"), join(assets, "favicon.svg"));
-const fonts = join(root, "node_modules/@fontsource-variable/source-serif-4/files");
-for (const name of ["latin-opsz-normal", "latin-ext-opsz-normal", "latin-opsz-italic", "latin-ext-opsz-italic"]) {
-  cpSync(join(fonts, `source-serif-4-${name}.woff2`), join(assets, "fonts", `source-serif-4-${name}.woff2`));
+const fonts = {
+  geist: ["latin-wght-normal", "latin-ext-wght-normal", "latin-wght-italic", "latin-ext-wght-italic"],
+  "geist-mono": ["latin-wght-normal", "latin-ext-wght-normal"],
+};
+for (const [family, names] of Object.entries(fonts)) {
+  for (const name of names) {
+    const file = `${family}-${name}.woff2`;
+    cpSync(join(root, "node_modules/@fontsource-variable", family, "files", file), join(assets, "fonts", file));
+  }
 }
 console.log(`built sharecli ${pkg.version} → dist/`);

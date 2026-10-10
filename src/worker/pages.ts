@@ -1,4 +1,5 @@
 import { VERSION } from "../shared/version";
+import { icons } from "./icons";
 
 const esc = (s: string) =>
   s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
@@ -7,7 +8,9 @@ const esc = (s: string) =>
 const scriptJson = (data: unknown) =>
   JSON.stringify(data).replace(/</g, "\\u003c").replace(/\u2028/g, "\\u2028").replace(/\u2029/g, "\\u2029");
 
-const FONT = `/_assets/fonts/source-serif-4-latin-opsz-normal.woff2`;
+const FONT = `/_assets/fonts/geist-latin-wght-normal.woff2`;
+const REPO = "https://github.com/alesmartan/sharecli";
+const GITHUB = icons.github();
 
 const BASE_HEAD = `
 <meta charset="utf-8">
@@ -18,26 +21,27 @@ const BASE_HEAD = `
 
 /** Small pages (passcode, expired, not found) share this inline stylesheet. */
 const PAGE_CSS = `
-@font-face{font-family:"Source Serif 4";font-style:normal;font-weight:200 900;font-display:swap;src:url(${FONT}) format("woff2")}
+@font-face{font-family:"Geist";font-style:normal;font-weight:100 900;font-display:swap;src:url(${FONT}) format("woff2")}
 :root{--paper:#fff;--ink:#17191e;--muted:#5f6673;--rule:#e4e7ec;--wash:#f4f6f9;--link:#2747c7;--danger:#b42318;color-scheme:light dark}
-@media (prefers-color-scheme:dark){:root{--paper:#131519;--ink:#e6e8ec;--muted:#959ca8;--rule:#2a2e36;--wash:#1b1e23;--link:#94a9ff;--danger:#ff8a80}}
+@media (prefers-color-scheme:dark){:root{--paper:#161616;--ink:#ececec;--muted:#9e9e9e;--rule:#2e2e2e;--wash:#1f1f1f;--link:#94a9ff;--danger:#ff8a80}}
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--paper);color:var(--ink)}
-body{font:17px/1.6 "Source Serif 4",Georgia,serif;font-optical-sizing:auto;min-height:100vh;display:flex;flex-direction:column}
+body{font:16px/1.6 "Geist",system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh;display:flex;flex-direction:column}
 main{width:100%;max-width:27rem;margin:0 auto;padding:22vh 1.5rem 3rem;flex:1}
-h1{font-size:2.1rem;line-height:1.15;font-weight:620;letter-spacing:-.015em;margin:.9rem 0 .6rem}
+h1{font-size:2rem;line-height:1.15;font-weight:650;letter-spacing:-.035em;margin:.9rem 0 .6rem}
 p{margin:0 0 1.4rem;color:var(--muted)}
 a{color:var(--link)}
 .glyph{width:2.25rem;height:2.25rem;color:var(--muted)}
 form{display:flex;gap:.5rem;margin-top:1.6rem}
 input{flex:1;min-width:0;font:500 1.15rem/1 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.18em;padding:.8rem .9rem;border:1px solid var(--rule);border-radius:10px;background:var(--wash);color:var(--ink)}
 input:focus{outline:2px solid var(--link);outline-offset:1px;border-color:transparent}
-button{font:600 .95rem/1 system-ui,-apple-system,"Segoe UI",sans-serif;padding:0 1.15rem;border:0;border-radius:10px;background:var(--ink);color:var(--paper);cursor:pointer}
+button{font:600 .95rem/1 "Geist",system-ui,-apple-system,"Segoe UI",sans-serif;padding:0 1.15rem;border:0;border-radius:10px;background:var(--ink);color:var(--paper);cursor:pointer}
 button:hover{opacity:.88}
 button:focus-visible{outline:2px solid var(--link);outline-offset:2px}
-.error{color:var(--danger);font:500 .9rem/1.4 system-ui,-apple-system,sans-serif;margin:.8rem 0 0}
-footer{padding:1.5rem;text-align:center;font:.8rem/1 system-ui,-apple-system,sans-serif;color:var(--muted)}
-footer a{color:inherit;text-decoration:none}
+.error{color:var(--danger);font-size:.9rem;font-weight:500;line-height:1.4;margin:.8rem 0 0}
+footer{display:flex;justify-content:center;align-items:center;gap:.6rem;padding:1.5rem;font-size:.8rem;line-height:1;color:var(--muted)}
+footer a{display:inline-flex;align-items:center;gap:.35rem;color:inherit;text-decoration:none}
+footer .sep{color:var(--rule)}
 footer a:hover{text-decoration:underline}`;
 
 const LOCK = `<svg class="glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10" rx="2.5"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15.5" r="1.2" fill="currentColor" stroke="none"/></svg>`;
@@ -54,7 +58,7 @@ ${opts.head ?? ""}
 </head>
 <body>
 <main>${opts.body}</main>
-<footer><a href="/">${esc(opts.host)}</a></footer>
+<footer><a href="/">${esc(opts.host)}</a><span class="sep">/</span><a href="${REPO}">${GITHUB}via sharecli</a></footer>
 </body>
 </html>`;
   return new Response(html, {
@@ -109,7 +113,7 @@ export function homePage(host: string) {
     title: host,
     host,
     status: 200,
-    body: `${BLANK}<h1>${esc(host)}</h1><p>Pages shared with <a href="https://github.com/alesmartan/sharecli">sharecli</a>. Open a full link to see one.</p>`,
+    body: `${BLANK}<h1>${esc(host)}</h1><p>Pages shared with <a href="${REPO}">sharecli</a>. Open a full link to see one.</p>`,
   });
 }
 
@@ -139,18 +143,20 @@ export function markdownPage(host: string, d: MarkdownViewerData, headers: Heade
 <meta property="og:title" content="${esc(d.title)}">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="${esc(host)}">
-<script>try{var t=localStorage.getItem("sharecli-theme");if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<script>try{var t=localStorage.getItem("sharecli-theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}</script>
 <link rel="stylesheet" href="/_assets/viewer.css?v=${v}">
 </head>
 <body>
 <header class="bar">
-  <a class="bar-host" href="/${esc(d.slug)}">${esc(host)}</a>
+  <div class="bar-left">
+    <a class="bar-host" href="/${esc(d.slug)}">${esc(host)}</a>
+    <span class="bar-sep" aria-hidden="true">/</span>
+    <a class="bar-via" href="${REPO}" title="sharecli on GitHub">${GITHUB}<span class="wide">via sharecli</span></a>
+  </div>
   <div class="bar-actions">
-    <a class="btn" href="/${esc(d.slug)}/raw" download="${esc(d.filename)}">Download<span class="wide"> .md</span></a>
-    <button class="btn" type="button" data-copy-link>Copy<span class="wide"> link</span></button>
-    <button class="btn btn-icon" type="button" data-theme-toggle aria-label="Switch light or dark theme" title="Switch theme">
-      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg>
-    </button>
+    <a class="btn btn-icon" href="/${esc(d.slug)}/raw" download="${esc(d.filename)}" aria-label="Download ${esc(d.filename)}" title="Download .md">${icons.download()}</a>
+    <button class="btn btn-icon" type="button" data-copy-link aria-label="Copy link" title="Copy link">${icons.link(18, "copy-idle")}${icons.tick(18, "copy-done")}</button>
+    <button class="btn btn-icon" type="button" data-theme-toggle aria-label="Theme" title="Theme">${icons.system(18, "theme-icon theme-system")}${icons.light(18, "theme-icon theme-light")}${icons.dark(18, "theme-icon theme-dark")}</button>
   </div>
 </header>
 <div class="layout">
