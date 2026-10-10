@@ -155,10 +155,16 @@ describe("publishing", () => {
     const page = await (await get(`/${s.slug}`)).text();
     assert.match(page, /<title>Release notes<\/title>/);
     assert.match(page, /\/_assets\/viewer\.js/);
+    assert.match(page, /class="bar-via" href="https:\/\/github\.com\/alesmartan\/sharecli"/);
+    assert.match(page, /data-theme-toggle/);
+    assert.match(page, /data-copy-link aria-label="Copy link"/);
     const raw = await get(`/${s.slug}/raw`);
     assert.match(raw.headers.get("content-disposition"), /attachment; filename="notes\.md"/);
     assert.equal((await get(`/${s.slug}/shot.png`)).status, 200);
     assert.equal((await get("/_assets/viewer.js")).status, 200);
+    for (const font of ["geist-latin-wght-normal", "geist-mono-latin-wght-normal"]) {
+      assert.equal((await get(`/_assets/fonts/${font}.woff2`)).status, 200, font);
+    }
   });
 
   test("custom slugs are validated and must be free", async () => {
