@@ -1,6 +1,6 @@
 {
   "name": "@alesmartan/sharecli",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Share HTML pages, Markdown docs and files from the terminal (or your AI agent) under your own domain. Runs free on Cloudflare.",
   "type": "module",
   "license": "MIT",

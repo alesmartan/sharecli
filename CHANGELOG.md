@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/alesmartan/sharecli/compare/v0.2.0...v0.3.0) (2026-10-10)
+
+
+### Features
+
+* Geist fonts, theme switch, icon-only bar and a sharecli link in the viewer ([#2](https://github.com/alesmartan/sharecli/issues/2)) ([ca62b63](https://github.com/alesmartan/sharecli/commit/ca62b63c1b5bbc68855ccbddb7d9205d73860dbd))
+
 ## [0.2.0](https://github.com/alesmartan/sharecli/compare/v0.1.0...v0.2.0) (2026-10-10)
 
 
