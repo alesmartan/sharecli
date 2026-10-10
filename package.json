@@ -1,0 +1,42 @@
+{
+  "name": "sharecli",
+  "version": "0.1.0",
+  "description": "Share HTML pages, Markdown docs and files from the terminal (or your AI agent) under your own domain. Runs free on Cloudflare.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Ales Martan",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alesmartan/sharecli.git"
+  },
+  "homepage": "https://github.com/alesmartan/sharecli",
+  "bin": {
+    "share": "dist/cli.js",
+    "sharecli": "dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "dev": "node scripts/build.mjs && wrangler d1 execute sharecli-dev --local --file src/worker/schema.sql && wrangler dev",
+    "typecheck": "tsc -p tsconfig.json && tsc -p tsconfig.worker.json && tsc -p tsconfig.viewer.json",
+    "test": "node scripts/build.mjs && node --test test/",
+    "prepublishOnly": "node scripts/build.mjs"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20261009.1",
+    "@fontsource-variable/source-serif-4": "^5.3.0",
+    "@types/node": "^26.6.4",
+    "esbuild": "^0.28.2",
+    "highlight.js": "^11.12.0",
+    "marked": "^18.1.0",
+    "typescript": "^7.0.2",
+    "wrangler": "^4.149.0"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "$schema": "https://t3.codes/schema/t3.json",
+  "iconPath": "icon.svg",
+  "scripts": [
+    {
+      "name": "Setup Worktree",
+      "command": "bash scripts/worktree-setup.sh",
+      "icon": "configure",
+      "runOnWorktreeCreate": true,
+      "async": false
+    },
+    {
+      "name": "Worker",
+      "command": "pnpm dev",
+      "icon": "play",
+      "previewUrl": "http://localhost:8787"
+    },
+    {
+      "name": "Build",
+      "command": "pnpm build",
+      "icon": "build"
+    },
+    {
+      "name": "Typecheck",
+      "command": "pnpm typecheck",
+      "icon": "lint"
+    },
+    {
+      "name": "Test",
+      "command": "pnpm test",
+      "icon": "test"
+    }
+  ]
+}
