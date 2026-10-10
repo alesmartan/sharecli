@@ -16,16 +16,6 @@
       "previewUrl": "http://localhost:8787"
     },
     {
-      "name": "Build",
-      "command": "pnpm build",
-      "icon": "build"
-    },
-    {
-      "name": "Typecheck",
-      "command": "pnpm typecheck",
-      "icon": "lint"
-    },
-    {
       "name": "Test",
       "command": "pnpm test",
       "icon": "test"

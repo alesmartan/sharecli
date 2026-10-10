@@ -29,7 +29,7 @@
     "build": "node scripts/build.mjs",
     "dev": "node scripts/build.mjs && wrangler d1 execute sharecli-dev --local --file src/worker/schema.sql && wrangler dev",
     "typecheck": "tsc -p tsconfig.json && tsc -p tsconfig.worker.json && tsc -p tsconfig.viewer.json",
-    "test": "node scripts/build.mjs && node --test \"test/**/*.test.mjs\"",
+    "test": "pnpm typecheck && node scripts/build.mjs && node --test \"test/**/*.test.mjs\"",
     "prepublishOnly": "node scripts/build.mjs"
   },
   "devDependencies": {
